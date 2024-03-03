@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PokemonFavoritesAPI.Services;
 
 namespace PokemonFavoritesAPI.Controllers;
 
@@ -8,15 +9,18 @@ public class PokemonController : ControllerBase
 {
 
     private readonly ILogger<PokemonController> _logger;
+    private readonly IPokemonService _pokemonService;
 
-    public PokemonController(ILogger<PokemonController> logger)
+    public PokemonController(ILogger<PokemonController> logger, IPokemonService pokemonService)
     {
         _logger = logger;
+        _pokemonService = pokemonService;
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok();
+        var result = await _pokemonService.GetPokemon();
+        return Ok(result);
     }
 }

@@ -14,7 +14,7 @@ public class PokemonFavoritesContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
+        options.UseSqlite(Configuration.GetConnectionString("PokemonFavoritesDatabase"));
     }
 
     public DbSet<Pokemon> Pokemon { get; set; }
