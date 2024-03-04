@@ -19,9 +19,9 @@ public class FavoritesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(GetFavoritePokemonRequest request)
     {
-        var result = await _favoritesService.GetPokemon();
+        var result = await _favoritesService.GetFavoritePokemonByUserId(request);
         
         return Ok(result);
     }
@@ -30,6 +30,13 @@ public class FavoritesController : ControllerBase
     public async Task<IActionResult> Post([FromBody] AddFavoritePokemonRequest request)
     {
         await _favoritesService.AddFavoritePokemon(request);
+        return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromBody] DeleteFavoritePokemonRequest request)
+    {
+        await _favoritesService.DeleteFavoritePokemon(request);
         return Ok();
     }
     

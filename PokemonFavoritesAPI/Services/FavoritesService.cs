@@ -7,8 +7,9 @@ namespace PokemonFavoritesAPI.Services;
 
 public interface IFavoritesService : IBaseService
 {
-    Task<IEnumerable<Pokemon>> GetPokemon();
+    Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(GetFavoritePokemonRequest request);
     Task AddFavoritePokemon(AddFavoritePokemonRequest request);
+    Task DeleteFavoritePokemon(DeleteFavoritePokemonRequest request);
 }
 
 public class FavoritesService : BaseService, IFavoritesService
@@ -17,9 +18,11 @@ public class FavoritesService : BaseService, IFavoritesService
         : base(dbContext)
     { }
 
-    public async Task<IEnumerable<Pokemon>> GetPokemon()
+    public async Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(GetFavoritePokemonRequest request)
     {
-        return await _dbContext.Pokemon.ToListAsync();
+        return await _dbContext.FavoritePokemon
+            .Where(p => p.UserId == request.UserId)
+            .ToListAsync();
     }
 
     public async Task AddFavoritePokemon(AddFavoritePokemonRequest request)
@@ -27,6 +30,19 @@ public class FavoritesService : BaseService, IFavoritesService
         await _dbContext.FavoritePokemon.AddAsync(
             new()
             {
+                PokemonId = request.PokemonId,
+                UserId = request.UserId
+            });
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteFavoritePokemon(DeleteFavoritePokemonRequest request)
+    {
+        _dbContext.FavoritePokemon.Remove(
+            new()
+            {
+                Id = request.Id,
                 PokemonId = request.PokemonId,
                 UserId = request.UserId
             });
