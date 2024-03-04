@@ -18,4 +18,6 @@ public class PokemonFavoritesContext : DbContext
     }
 
     public DbSet<Pokemon> Pokemon { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<FavoritePokemon> FavoritePokemon { get; set; }
 }

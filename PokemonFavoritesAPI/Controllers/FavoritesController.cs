@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonFavoritesAPI.Services;
+using PokemonFavoritesAPI.Database.DTOs;
 
 namespace PokemonFavoritesAPI.Controllers;
 
@@ -24,4 +25,12 @@ public class FavoritesController : ControllerBase
         
         return Ok(result);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] AddFavoritePokemonRequest request)
+    {
+        await _favoritesService.AddFavoritePokemon(request);
+        return Ok();
+    }
+    
 }

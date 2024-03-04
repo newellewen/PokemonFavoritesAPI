@@ -7,7 +7,7 @@ namespace PokemonFavoritesAPI.Services;
 
 public interface IPokemonService : IBaseService
 {
-    Task<string> GetPokemon();
+    Task<string> GetPokemon(int limit, int offset);
 }
 
 public class PokemonService : BaseService, IPokemonService
@@ -22,11 +22,11 @@ public class PokemonService : BaseService, IPokemonService
         _logger = logger;
     }
 
-    public async Task<string> GetPokemon()
+    public async Task<string> GetPokemon(int limit, int offset)
     {
         var httpClient = _httpClientFactory.CreateClient("PokeAPI");
         var httpResponseMessage = await httpClient.GetAsync(
-            "v2/pokemon");
+            $"pokemon?limit={limit}&offset={offset}");
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {

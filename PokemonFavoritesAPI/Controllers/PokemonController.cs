@@ -17,10 +17,10 @@ public class PokemonController : ControllerBase
         _pokemonService = pokemonService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get()
+    [HttpGet()]
+    public async Task<IActionResult> Get([FromQuery] int limit, [FromQuery] int offset)
     {
-        var result = await _pokemonService.GetPokemon();
+        var result = await _pokemonService.GetPokemon(limit, offset);
         return Ok(result);
     }
 }
