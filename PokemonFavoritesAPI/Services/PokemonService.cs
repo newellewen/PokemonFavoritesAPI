@@ -8,6 +8,7 @@ namespace PokemonFavoritesAPI.Services;
 public interface IPokemonService : IBaseService
 {
     Task<string> GetPokemon(int limit, int offset);
+    Task<Pokemon> GetPokemonById(int pokemonId);
 }
 
 public class PokemonService : BaseService, IPokemonService
@@ -41,5 +42,30 @@ public class PokemonService : BaseService, IPokemonService
         }
 
         return "Something went wrong";
+    }
+    
+    public async Task<Pokemon> GetPokemonById(int pokemonId)
+    {
+        var httpClient = _httpClientFactory.CreateClient("PokeAPI");
+        var httpResponseMessage = await httpClient.GetAsync(
+            $"pokemon/{pokemonId}");
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            using var contentStream =
+                await httpResponseMessage.Content.ReadAsStreamAsync();
+
+            using (StreamReader reader = new StreamReader(contentStream))
+            {
+                string json = reader.ReadToEnd();
+                return JsonSerializer.Deserialize<Pokemon>(json, 
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })!;
+            }
+        }
+
+        return null;
     }
 }

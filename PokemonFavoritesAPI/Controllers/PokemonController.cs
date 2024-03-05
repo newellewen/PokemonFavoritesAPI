@@ -23,4 +23,12 @@ public class PokemonController : ControllerBase
         var result = await _pokemonService.GetPokemon(limit, offset);
         return Ok(result);
     }
+    
+    [HttpGet("{pokemonId}")]
+    public async Task<IActionResult> GetPokemonById([FromRoute] int pokemonId)
+    {
+        var result = await _pokemonService.GetPokemonById(pokemonId);
+        return Ok(result);
+    }
+    
 }

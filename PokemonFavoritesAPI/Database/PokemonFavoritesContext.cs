@@ -16,8 +16,6 @@ public class PokemonFavoritesContext : DbContext
     {
         options.UseSqlite(Configuration.GetConnectionString("PokemonFavoritesDatabase"));
     }
-
-    public DbSet<Pokemon> Pokemon { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<FavoritePokemon> FavoritePokemon { get; set; }
 }
