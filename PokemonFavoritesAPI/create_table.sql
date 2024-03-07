@@ -14,5 +14,7 @@ CREATE TABLE favorite_pokemon
 	, user_id		INTEGER
 	, pokemon_id	INTEGER
 	, name 			VARCHAR(50)
+	, types  		VARCHAR(50)
+	, thumbnail 	VARCHAR(50)
 	, FOREIGN KEY (user_id) REFERENCES users(id)
 );
