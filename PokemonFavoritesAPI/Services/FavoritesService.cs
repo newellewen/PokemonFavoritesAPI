@@ -7,9 +7,10 @@ namespace PokemonFavoritesAPI.Services;
 
 public interface IFavoritesService : IBaseService
 {
-    Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(GetFavoritePokemonRequest request);
+    Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(int userId);
+    Task<bool> IsPokemonUserFavorite(int userId, int pokemonId);
     Task AddFavoritePokemon(AddFavoritePokemonRequest request);
-    Task DeleteFavoritePokemon(DeleteFavoritePokemonRequest request);
+    Task DeleteFavoritePokemon(int userId, int pokemonId);
 }
 
 public class FavoritesService : BaseService, IFavoritesService
@@ -18,34 +19,39 @@ public class FavoritesService : BaseService, IFavoritesService
         : base(dbContext)
     { }
 
-    public async Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(GetFavoritePokemonRequest request)
+    public async Task<IEnumerable<FavoritePokemon>> GetFavoritePokemonByUserId(int userId)
     {
         return await _dbContext.FavoritePokemon
-            .Where(p => p.UserId == request.UserId)
+            .Where(p => p.UserId == userId)
             .ToListAsync();
     }
 
+    public async Task<bool> IsPokemonUserFavorite(int userId, int pokemonId)
+    {
+        return _dbContext.FavoritePokemon
+            .Any(f => f.UserId == userId && f.PokemonId == pokemonId);
+    }
+    
     public async Task AddFavoritePokemon(AddFavoritePokemonRequest request)
     {
         await _dbContext.FavoritePokemon.AddAsync(
             new()
             {
                 PokemonId = request.PokemonId,
-                UserId = request.UserId
+                UserId = request.UserId,
+                Name = request.Name!
             });
 
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteFavoritePokemon(DeleteFavoritePokemonRequest request)
+    public async Task DeleteFavoritePokemon(int userId, int pokemonId)
     {
-        _dbContext.FavoritePokemon.Remove(
-            new()
-            {
-                Id = request.Id,
-                PokemonId = request.PokemonId,
-                UserId = request.UserId
-            });
+        var favoritesToDelete = await _dbContext.FavoritePokemon
+            .Where(f => f.UserId == userId && f.PokemonId == pokemonId)
+            .ToListAsync();
+        
+        _dbContext.FavoritePokemon.RemoveRange(favoritesToDelete);
 
         await _dbContext.SaveChangesAsync();
     }

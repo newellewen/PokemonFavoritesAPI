@@ -19,13 +19,21 @@ public class FavoritesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(GetFavoritePokemonRequest request)
+    public async Task<IActionResult> Get([FromQuery] int userId)
     {
-        var result = await _favoritesService.GetFavoritePokemonByUserId(request);
+        var result = await _favoritesService.GetFavoritePokemonByUserId(userId);
         
         return Ok(result);
     }
 
+    [HttpGet("IsFavorite")]
+    public async Task<IActionResult> IsPokemonUserFavorite([FromQuery] int userId, [FromQuery] int pokemonId)
+    {
+        var result = await _favoritesService.IsPokemonUserFavorite(userId, pokemonId);
+
+        return Ok(result);
+    }
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AddFavoritePokemonRequest request)
     {
@@ -34,9 +42,9 @@ public class FavoritesController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromBody] DeleteFavoritePokemonRequest request)
+    public async Task<IActionResult> Delete([FromQuery] int userId, [FromQuery] int pokemonId)
     {
-        await _favoritesService.DeleteFavoritePokemon(request);
+        await _favoritesService.DeleteFavoritePokemon(userId, pokemonId);
         return Ok();
     }
     

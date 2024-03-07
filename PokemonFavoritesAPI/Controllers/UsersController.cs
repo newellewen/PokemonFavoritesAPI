@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -22,30 +23,46 @@ public class UsersController : ControllerBase
         _config = config;
     }
     
-    
-    [HttpPost]
+    [HttpPost("Register")]
     public async Task<IActionResult> Post([FromBody] AddUserRequest request)
     {
-        await _usersService.AddUser(request);
-        return Ok();
+        try
+        {
+            await _usersService.AddUser(request);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     
     [HttpPost("Login")]
-    public IActionResult Post([FromBody] LoginRequest loginRequest)
+    public async Task<IActionResult> Post([FromBody] LoginRequest loginRequest)
     {
-        //your logic for login process
-        //If login usrename and password are correct then proceed to generate token
+        try
+        {
+            var user = await _usersService.GetUser(loginRequest.Username, loginRequest.Password);
+            
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name, user.Username));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
 
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
+                _config["Jwt:Issuer"],
+                claims,
+                expires: DateTime.Now.AddMinutes(120));
 
-        var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
-            _config["Jwt:Issuer"],
-            null,
-            expires: DateTime.Now.AddMinutes(120));
+            var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
 
-        var token =  new JwtSecurityTokenHandler().WriteToken(Sectoken);
-
-        return Ok(token);
+            return Ok(token);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
+    
+    
     
 }
