@@ -39,7 +39,9 @@ public class FavoritesService : BaseService, IFavoritesService
             {
                 PokemonId = request.PokemonId,
                 UserId = request.UserId,
-                Name = request.Name!
+                Name = request.Name!,
+                Types = request.Types!,
+                Thumbnail = request.Thumbnail!
             });
 
         await _dbContext.SaveChangesAsync();

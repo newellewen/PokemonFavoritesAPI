@@ -16,4 +16,8 @@ public class FavoritePokemon
     public string Name { get; set; }
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
+    [Column("types")]
+    public string Types { get; set; }
+    [Column("thumbnail")]
+    public string Thumbnail { get; set; }
 }
